@@ -307,6 +307,43 @@ exports.compose_content_begins_typeahead = function (query) {
     }
     var rest = split[1];
 
+    // Dynamically position typeahead next to cursor
+    var textarea = $('#compose-textarea');
+    var inputX = textarea.offset().left;
+    var inputY = textarea.offset().top;
+
+    const div = document.createElement('div');
+    // get the computed style of the input and clone it onto the dummy element
+    div.className = 'dummy';
+    var $clone = textarea.clone();
+    $('.dummy').html($clone);
+      // var cursorIndex = textarea.prop("selectionStart");
+      const textContent = textarea.val();
+      // set the text content of the dummy element div
+      // div.whiteSpace = "pre-wrap";
+      div.textContent = textContent;
+      var lines = div.innerHTML.split(/\r\n|\r|\n/).length;
+      div.innerHTML = div.innerHTML.replace(/\n/g, '<br>\n');
+      div.style.height = 'auto';
+      // create a marker element to obtain caret position
+      const span = document.createElement('span');
+      span.textContent = ' ';
+      // append the span marker to the div
+      div.appendChild(span);
+      // append the dummy element to the body
+      document.body.appendChild(div);
+
+      // get the marker position, this is the caret position top and left relative to the input
+      const { offsetLeft: spanX, offsetTop: spanY } = span;
+      // lastly, remove that dummy element
+      document.body.removeChild(div);
+      $('.typeahead').css({
+        left: inputX + spanX,
+        // top: spanY
+    });
+
+
+
     // If the remaining content after the mention isn't a space or
     // punctuation (or end of the message), don't try to typeahead; we
     // probably just have the cursor in the middle of an

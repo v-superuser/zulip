@@ -1884,7 +1884,6 @@
 
       this.$menu.css({
         top: top_pos
-       , left: pos.left
       })
 
       this.$menu.show()
